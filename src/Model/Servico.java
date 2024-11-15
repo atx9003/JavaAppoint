@@ -1,16 +1,14 @@
 package Model;
 
-import java.util.ArrayList;
-
 public class Servico {
     private String tipo;
     private int tempoDuracao;
     private double preco;
 
-    private ArrayList<Funcionario> funcionarios;
-
-    public Servico() {
-        funcionarios = new ArrayList<>();
+    public Servico(String tipo, int tempoDuracao, double preco) {
+        this.tipo = tipo;
+        this.tempoDuracao = tempoDuracao;
+        this.preco = preco;
     }
 
     public String getTipo() {
@@ -37,11 +35,8 @@ public class Servico {
         this.preco = preco;
     }
 
-    public ArrayList<Funcionario> getFuncionarios() {
-        return funcionarios;
-    }
-
-    public void adicionarFuncionario(Funcionario funcionario) {
-        funcionarios.add(funcionario);
+    @Override
+    public String toString() {
+        return tipo + " (" + tempoDuracao + " min - R$" + preco + ")";
     }
 }

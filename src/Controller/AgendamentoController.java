@@ -1,92 +1,85 @@
 package Controller;
 
 import Model.Agendamento;
-import Model.Funcionario;
 import Model.ListaFuncionario;
+import Model.ListaServico;
+import Model.Servico;
 import View.AgendamentoView;
 import View.TabelaAgendamentosView;
 
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.List;
 
 public class AgendamentoController {
     private AgendamentoView view;
-    private ListaFuncionario listaFuncionarios;
-    private ArrayList<Agendamento> agendamentos;
+    private List<Agendamento> agendamentos;
+    private ListaServico listaServico;
 
     public AgendamentoController(AgendamentoView view, ListaFuncionario listaFuncionarios) {
         this.view = view;
-        this.listaFuncionarios = listaFuncionarios;
         this.agendamentos = new ArrayList<>();
+        this.listaServico = new ListaServico();
 
-        this.view.addCadastrarFuncionarioListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                cadastrarFuncionario();
-            }
-        });
-
-        this.view.addAgendarButtonListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                agendarServico();
-            }
-        });
-
-        this.view.addConsultarAgendamentosListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                consultarAgendamentos();
-            }
-        });
+        view.addCadastrarFuncionarioListener(new CadastrarFuncionarioListener());
+        view.addAgendarButtonListener(new AgendarServicoListener());
+        view.addConsultarAgendamentosListener(new ConsultarAgendamentosListener());
+        view.addCadastrarServicoListener(new CadastrarServicoListener());
     }
 
-    private void cadastrarFuncionario() {
-        String nomeFuncionario = view.getNomeFuncionario();
-        if (!nomeFuncionario.isEmpty()) {
-            Funcionario funcionario = new Funcionario();
-            funcionario.setNome(nomeFuncionario);
-            listaFuncionarios.adicionarFuncionario(funcionario);
+    class CadastrarFuncionarioListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String nomeFuncionario = view.getNomeFuncionario();
             view.adicionarFuncionarioComboBox(nomeFuncionario);
             view.mostrarMensagem("Funcionário cadastrado com sucesso!");
-        } else {
-            view.mostrarMensagem("Por favor, preencha o nome do funcionário.");
         }
     }
 
-    private void agendarServico() {
-        String cliente = view.getCliente();
-        String celularCliente = view.getCelularCliente();
-        String emailCliente = view.getEmailCliente();
-        String servico = view.getServico();
-        String funcionario = view.getFuncionarioSelecionado();
-        String data = view.getData();
-        String hora = view.getHora();
+    class CadastrarServicoListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String tipo = JOptionPane.showInputDialog("Digite o tipo de serviço:");
+            int duracao = Integer.parseInt(JOptionPane.showInputDialog("Digite o tempo de duração (em minutos):"));
+            double preco = Double.parseDouble(JOptionPane.showInputDialog("Digite o preço do serviço:"));
 
-        if (cliente.isEmpty() || celularCliente.isEmpty() || servico.isEmpty() || funcionario == null || data.isEmpty() || hora.isEmpty()) {
-            view.mostrarMensagem("Todos os campos são obrigatórios, exceto o email.");
-        } else {
-            Agendamento agendamento = new Agendamento(cliente, celularCliente, emailCliente, servico, funcionario, data, hora);
-            agendamentos.add(agendamento);
-            view.mostrarMensagem("Agendamento realizado com sucesso!");
+            Servico servico = new Servico(tipo, duracao, preco);
+            listaServico.adicionarServico(servico);
+            view.adicionarServicoComboBox(servico);
+
+            view.mostrarMensagem("Serviço cadastrado com sucesso!");
         }
     }
 
-    private void consultarAgendamentos() {
-        String[][] dados = new String[agendamentos.size()][7];
-        for (int i = 0; i < agendamentos.size(); i++) {
-            Agendamento agendamento = agendamentos.get(i);
-            dados[i][0] = agendamento.getNomeCliente();
-            dados[i][1] = agendamento.getCelularCliente();
-            dados[i][2] = agendamento.getEmailCliente();
-            dados[i][3] = agendamento.getTipoServico();
-            dados[i][4] = agendamento.getFuncionarioResponsavel();
-            dados[i][5] = agendamento.getData();
-            dados[i][6] = agendamento.getHora();
+    class AgendarServicoListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            try {
+                String cliente = view.getCliente();
+                String celularCliente = view.getCelularCliente();
+                String emailCliente = view.getEmailCliente();
+                String funcionario = view.getFuncionarioSelecionado();
+                Servico servico = view.getServicoSelecionado();
+                String data = view.getData();
+                String hora = view.getHora();
+
+                Agendamento agendamento = new Agendamento(cliente, celularCliente, emailCliente, funcionario, servico, data, hora);
+                agendamentos.add(agendamento);
+
+                view.mostrarMensagem("Agendamento realizado com sucesso!");
+            } catch (Exception ex) {
+                view.mostrarMensagem("Erro ao agendar serviço. Verifique os dados e tente novamente.");
+            }
         }
-        TabelaAgendamentosView tabelaAgendamentosView = new TabelaAgendamentosView();
-        tabelaAgendamentosView.atualizarTabelaAgendamentos(dados);
-        tabelaAgendamentosView.mostrar();
+    }
+
+    class ConsultarAgendamentosListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            TabelaAgendamentosView tabelaView = new TabelaAgendamentosView();
+            tabelaView.exibirAgendamentos(agendamentos);
+        }
     }
 }

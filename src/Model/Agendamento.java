@@ -3,20 +3,20 @@ package Model;
 import java.util.Date;
 
 public class Agendamento {
-    private String nomeCliente;
+    private String cliente;
     private String celularCliente;
     private String emailCliente;
-    private String tipoServico;
-    private String funcionarioResponsavel;
+    private String funcionario;
+    private Servico servico;
     private String data;
     private String hora;
 
-    public Agendamento(String nomeCliente, String celularCliente, String emailCliente, String tipoServico, String funcionarioResponsavel, String data, String hora) {
-        this.nomeCliente = nomeCliente;
+    public Agendamento(String cliente, String celularCliente, String emailCliente, String funcionario, Servico servico, String data, String hora) {
+        this.cliente = cliente;
         this.celularCliente = celularCliente;
         this.emailCliente = emailCliente;
-        this.tipoServico = tipoServico;
-        this.funcionarioResponsavel = funcionarioResponsavel;
+        this.funcionario = funcionario;
+        this.servico = servico;
         this.data = data;
         this.hora = hora;
     }
@@ -24,9 +24,8 @@ public class Agendamento {
     public Agendamento(Cliente cliente, Funcionario funcionario, Servico servico, Date data, String hora) {
     }
 
-    // Getters e setters
-    public String getNomeCliente() {
-        return nomeCliente;
+    public String getCliente() {
+        return cliente;
     }
 
     public String getCelularCliente() {
@@ -37,12 +36,12 @@ public class Agendamento {
         return emailCliente;
     }
 
-    public String getTipoServico() {
-        return tipoServico;
+    public String getFuncionario() {
+        return funcionario;
     }
 
-    public String getFuncionarioResponsavel() {
-        return funcionarioResponsavel;
+    public Servico getServico() {
+        return servico;
     }
 
     public String getData() {
@@ -51,5 +50,18 @@ public class Agendamento {
 
     public String getHora() {
         return hora;
+    }
+
+    @Override
+    public String toString() {
+        return "Agendamento{" +
+                "cliente='" + cliente + '\'' +
+                ", celularCliente='" + celularCliente + '\'' +
+                ", emailCliente='" + emailCliente + '\'' +
+                ", funcionario='" + funcionario + '\'' +
+                ", servico=" + servico +
+                ", data='" + data + '\'' +
+                ", hora='" + hora + '\'' +
+                '}';
     }
 }
