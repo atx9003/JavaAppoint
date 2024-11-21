@@ -3,17 +3,17 @@ package Model;
 import java.util.ArrayList;
 
 public class ListaFuncionario {
-    private ArrayList<Funcionario> funcionarios;
+    private ArrayList<String> funcionarios;
 
     public ListaFuncionario() {
         this.funcionarios = new ArrayList<>();
     }
 
-    public void adicionarFuncionario(Funcionario funcionario) {
+    public void adicionarFuncionario(String funcionario) {
         funcionarios.add(funcionario);
     }
 
-    public ArrayList<Funcionario> getFuncionarios() {
+    public ArrayList<String> getFuncionarios() {
         return funcionarios;
     }
 }

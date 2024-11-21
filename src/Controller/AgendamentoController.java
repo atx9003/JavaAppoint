@@ -17,11 +17,13 @@ public class AgendamentoController {
     private AgendamentoView view;
     private List<Agendamento> agendamentos;
     private ListaServico listaServico;
+    private ListaFuncionario listaFuncionario;
 
     public AgendamentoController(AgendamentoView view, ListaFuncionario listaFuncionarios) {
         this.view = view;
         this.agendamentos = new ArrayList<>();
         this.listaServico = new ListaServico();
+        this.listaFuncionario = listaFuncionarios;
 
         view.addCadastrarFuncionarioListener(new CadastrarFuncionarioListener());
         view.addAgendarButtonListener(new AgendarServicoListener());
@@ -32,24 +34,50 @@ public class AgendamentoController {
     class CadastrarFuncionarioListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            String nomeFuncionario = view.getNomeFuncionario();
-            view.adicionarFuncionarioComboBox(nomeFuncionario);
-            view.mostrarMensagem("Funcionário cadastrado com sucesso!");
+            try {
+                String nomeFuncionario = view.getNomeFuncionario();
+                if (nomeFuncionario.isEmpty()) {
+                    throw new Exception("O nome do funcionário não pode estar vazio.");
+                }
+                // Adiciona o funcionário na lista e na combobox
+                listaFuncionario.adicionarFuncionario(nomeFuncionario);
+                view.adicionarFuncionarioComboBox(nomeFuncionario);
+                view.mostrarMensagem("Funcionário cadastrado com sucesso!");
+            } catch (Exception ex) {
+                view.mostrarMensagem("Erro ao cadastrar funcionário. " + ex.getMessage());
+            }
         }
     }
 
     class CadastrarServicoListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            String tipo = JOptionPane.showInputDialog("Digite o tipo de serviço:");
-            int duracao = Integer.parseInt(JOptionPane.showInputDialog("Digite o tempo de duração (em minutos):"));
-            double preco = Double.parseDouble(JOptionPane.showInputDialog("Digite o preço do serviço:"));
+            try {
+                String tipo = JOptionPane.showInputDialog("Digite o tipo de serviço:");
+                if (tipo == null || tipo.isEmpty()) {
+                    throw new Exception("O tipo de serviço não pode estar vazio.");
+                }
 
-            Servico servico = new Servico(tipo, duracao, preco);
-            listaServico.adicionarServico(servico);
-            view.adicionarServicoComboBox(servico);
+                String duracaoStr = JOptionPane.showInputDialog("Digite o tempo de duração (em minutos):");
+                int duracao = Integer.parseInt(duracaoStr);
 
-            view.mostrarMensagem("Serviço cadastrado com sucesso!");
+                if (duracao <= 0) {
+                    throw new Exception("A duração do serviço deve ser um número positivo.");
+                }
+
+                String precoStr = JOptionPane.showInputDialog("Digite o preço do serviço:");
+                double preco = Double.parseDouble(precoStr);
+                if (preco <= 0) {
+                    throw new Exception("O preço do serviço deve ser um número positivo.");
+                }
+
+                Servico servico = new Servico(tipo, duracao, preco);
+                listaServico.adicionarServico(servico);
+                view.adicionarServicoComboBox(servico);
+                view.mostrarMensagem("Serviço cadastrado com sucesso!");
+            } catch (Exception ex) {
+                view.mostrarMensagem("Erro ao cadastrar serviço. " + ex.getMessage());
+            }
         }
     }
 
@@ -65,12 +93,19 @@ public class AgendamentoController {
                 String data = view.getData();
                 String hora = view.getHora();
 
+                // Verificar se os campos obrigatórios estão preenchidos (exceto email)
+                if (cliente.isEmpty() || celularCliente.isEmpty() || funcionario == null || servico == null || data.isEmpty() || hora.isEmpty()) {
+                    throw new Exception("Todos os campos obrigatórios devem ser preenchidos.");
+                }
+
+                // Se não houver exceção, cria o agendamento
                 Agendamento agendamento = new Agendamento(cliente, celularCliente, emailCliente, funcionario, servico, data, hora);
                 agendamentos.add(agendamento);
 
                 view.mostrarMensagem("Agendamento realizado com sucesso!");
             } catch (Exception ex) {
-                view.mostrarMensagem("Erro ao agendar serviço. Verifique os dados e tente novamente.");
+                // Exibir a mensagem de erro caso algum campo obrigatório não seja preenchido
+                view.mostrarMensagem("Erro ao agendar serviço. " + ex.getMessage());
             }
         }
     }

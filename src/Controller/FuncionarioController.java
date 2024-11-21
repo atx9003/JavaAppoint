@@ -28,7 +28,7 @@ public class FuncionarioController {
         if (!nome.isEmpty()) {
             Funcionario funcionario = new Funcionario();
             funcionario.setNome(nome);
-            model.adicionarFuncionario(funcionario);
+            model.adicionarFuncionario(String.valueOf(funcionario));
             view.mostrarMensagem("Funcionário adicionado com sucesso!");
             view.getFrame().repaint(); // Atualiza a janela
         } else {
