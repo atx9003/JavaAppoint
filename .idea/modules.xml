@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/JavaAppoint21.iml" filepath="$PROJECT_DIR$/JavaAppoint21.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/Java Appoint.iml" filepath="$PROJECT_DIR$/.idea/Java Appoint.iml" />
     </modules>
   </component>
 </project>
